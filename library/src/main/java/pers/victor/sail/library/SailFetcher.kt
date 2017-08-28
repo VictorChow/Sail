@@ -10,11 +10,14 @@ import java.net.URL
 /**
  * Created by Victor on 2017/8/27. (ง •̀_•́)ง
  */
-internal class SailFetcher : IFetcher {
-    private val handler = Handler(Looper.getMainLooper())
-    private lateinit var observer: IObserver
+internal class SailFetcher : ISailFetcher {
+    companion object {
+        private val handler = Handler(Looper.getMainLooper())
+    }
 
-    fun fetch(url: String, observer: IObserver) {
+    private lateinit var observer: ISailObserver
+
+    fun fetch(url: String, observer: ISailObserver) {
         this.observer = observer
         fetchImage(url)
     }

@@ -5,10 +5,11 @@ import android.graphics.Bitmap
 /**
  * Created by Victor on 2017/8/28. (ง •̀_•́)ง
  */
-internal interface ICache {
+internal interface ISailCache {
     fun putMemoryCache(url: String, bmp: Bitmap)
     fun putDiskCache(url: String, bmp: Bitmap)
     fun getMemoryCache(url: String): Bitmap?
     fun getDiskCache(url: String): Bitmap?
+    fun hasDiskCache(url: String): Boolean
     fun clear()
 }
