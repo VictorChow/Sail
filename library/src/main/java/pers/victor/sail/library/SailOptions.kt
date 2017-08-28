@@ -3,10 +3,42 @@ package pers.victor.sail.library
 /**
  * Created by Victor on 2017/8/28. (ง •̀_•́)ง
  */
-internal class SailOptions {
-    private var fadeIn = false
-    private var holder = 0
-    private var error = 0
-    private var width = 0
-    private var height = 0
+class SailOptions {
+    internal var fadeIn = false
+    internal var duration = 500L
+    internal var holder = 0
+    internal var error = 0
+    internal var width = 0
+    internal var height = 0
+    internal var quality = QualityStrategy.NORMAL
+    internal var cache = CacheStrategy.ALL
+
+    fun fadeIn(duration: Long = this.duration) = apply {
+        fadeIn = true
+    }
+
+    fun resize(width: Int, height: Int) = apply {
+        this.width = width
+        this.height = height
+        quality = QualityStrategy.NONE
+    }
+
+    fun holder(id: Int) = apply {
+        this.holder = id
+    }
+
+    fun error(id: Int) = apply {
+        this.error = id
+    }
+
+    fun quality(quality: QualityStrategy) = apply {
+        if (quality == QualityStrategy.NONE && width * height == 0) {
+            throw IllegalArgumentException("width, height must > 0 when SailQuality.NONE")
+        }
+        this.quality = quality
+    }
+
+    fun cache(cache: CacheStrategy) = apply {
+        this.cache = cache
+    }
 }

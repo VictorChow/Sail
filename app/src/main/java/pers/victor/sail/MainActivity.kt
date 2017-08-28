@@ -6,7 +6,10 @@ import android.widget.ImageView
 import kotlinx.android.synthetic.main.activity_main.*
 import pers.victor.ext.click
 import pers.victor.ext.toast
+import pers.victor.sail.library.CacheStrategy
+import pers.victor.sail.library.QualityStrategy
 import pers.victor.sail.library.Sail
+import pers.victor.sail.library.SailOptions
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,19 +29,24 @@ class MainActivity : AppCompatActivity() {
                 "https://timgsa.baidu.com/timg?image&quality=80&size=b10000_10000&sec=1503856195&di=d4e238b76c3e82790a1a76aa68a45400&src=http://att.bbs.duowan.com/forum/201408/22/231039942e0z1p00eed928.jpg"
         )
 
+        val options = SailOptions()
+                .holder(R.mipmap.ic_launcher)
+                .error(R.mipmap.ic_launcher)
+                .fadeIn()
+                .cache(CacheStrategy.ALL)
+                .quality(QualityStrategy.NORMAL)
+
         arrayOf(iv1, iv2, iv3, iv4, iv5, iv6, iv7, iv8, iv9).forEachIndexed { index, imageView ->
             Sail.with(this)
                     .load(urls[index])
-                    .holder(R.mipmap.ic_launcher)
-                    .fadeIn()
+                    .options(options)
                     .into(imageView)
         }
         btn_download.click {
             arrayOf(iv1, iv2, iv3, iv4, iv5, iv6, iv7, iv8, iv9).forEachIndexed { index, imageView ->
                 Sail.with(this)
                         .load(urls[index])
-                        .holder(R.mipmap.ic_launcher)
-                        .fadeIn()
+                        .options(options)
                         .into(imageView)
             }
         }
