@@ -8,6 +8,7 @@ import android.graphics.Matrix
  */
 internal object SailCropper : ICropper {
 
+    @Synchronized
     override fun crop(bmp: Bitmap, maxWidth: Int, maxHeight: Int): Bitmap {
         val width = bmp.width
         val height = bmp.height
@@ -28,6 +29,7 @@ internal object SailCropper : ICropper {
         }
     }
 
+    @Synchronized
     private fun resizeImage(bmp: Bitmap, w: Float, h: Float): Bitmap {
         val width = bmp.width
         val height = bmp.height
@@ -40,6 +42,4 @@ internal object SailCropper : ICropper {
         }
         return bmp
     }
-
-
 }

@@ -6,8 +6,6 @@ import android.widget.ImageView
 import kotlinx.android.synthetic.main.activity_main.*
 import pers.victor.ext.click
 import pers.victor.ext.toast
-import pers.victor.sail.library.CacheStrategy
-import pers.victor.sail.library.QualityStrategy
 import pers.victor.sail.library.Sail
 import pers.victor.sail.library.SailOptions
 
@@ -33,15 +31,22 @@ class MainActivity : AppCompatActivity() {
                 .holder(R.mipmap.ic_launcher)
                 .error(R.mipmap.ic_launcher)
                 .fadeIn()
-                .cache(CacheStrategy.ALL)
-                .quality(QualityStrategy.NORMAL)
 
         arrayOf(iv1, iv2, iv3, iv4, iv5, iv6, iv7, iv8, iv9).forEachIndexed { index, imageView ->
-            Sail.with(this)
-                    .load(urls[index])
-                    .options(options)
-                    .into(imageView)
+            //            Sail.with(this)
+//                    .load(urls[index])
+//                    .options(options)
+//                    .into(imageView)
+
+            /*
+                low         24m     768k
+                normal      28m     1.2m
+                high        38m     2.2m
+                original    87m     6.1m
+             */
+
         }
+
         btn_download.click {
             arrayOf(iv1, iv2, iv3, iv4, iv5, iv6, iv7, iv8, iv9).forEachIndexed { index, imageView ->
                 Sail.with(this)

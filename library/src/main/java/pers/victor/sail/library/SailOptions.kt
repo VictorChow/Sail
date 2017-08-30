@@ -18,9 +18,11 @@ class SailOptions {
     }
 
     fun resize(width: Int, height: Int) = apply {
+        if (width <= 0 || height <= 0) {
+            throw IllegalArgumentException("width, height must > 0")
+        }
         this.width = width
         this.height = height
-        quality = QualityStrategy.NONE
     }
 
     fun holder(id: Int) = apply {
@@ -32,10 +34,9 @@ class SailOptions {
     }
 
     fun quality(quality: QualityStrategy) = apply {
-        if (quality == QualityStrategy.NONE && width * height == 0) {
-            throw IllegalArgumentException("width, height must > 0 when SailQuality.NONE")
-        }
         this.quality = quality
+        width = 0
+        height = 0
     }
 
     fun cache(cache: CacheStrategy) = apply {

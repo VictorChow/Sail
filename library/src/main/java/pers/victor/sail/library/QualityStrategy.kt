@@ -8,5 +8,4 @@ enum class QualityStrategy {
     NORMAL, //1.5
     HIGH, //2
     ORIGINAL,
-    NONE //resize
 }

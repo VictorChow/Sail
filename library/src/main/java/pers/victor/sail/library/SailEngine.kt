@@ -10,13 +10,12 @@ import android.widget.ImageView
  */
 class SailEngine private constructor(context: Context) : ISailEngine, ISailObserver {
     private lateinit var target: ImageView
-    private var iCropper: ICropper = SailCropper
     private var skipMemoryCache = false
     private var skipDiskCache = false
     private var url = ""
     private val iCache = SailCache
     private val iFetcher = SailFetcher()
-    private var options: SailOptions? = null
+    private var options = SailOptions()
 
     companion object {
         fun manage(context: Context) = SailEngine(context)
@@ -53,13 +52,13 @@ class SailEngine private constructor(context: Context) : ISailEngine, ISailObser
             if (!skipDiskCache) {
                 val hasDiskCache = iCache.hasDiskCache(url)
                 if (hasDiskCache) {
-                    SailPool.execute(Runnable {
+                    SailThreadPool.execute(Runnable {
                         println("磁盘缓存")
                         val cache = iCache.getDiskCache(url)!!
-                        if (options != null && options!!.cache == CacheStrategy.ALL || options!!.cache == CacheStrategy.MEMORY) {
+                        if (options.cache == CacheStrategy.ALL || options.cache == CacheStrategy.MEMORY) {
                             iCache.putMemoryCache(url, cache)
                         }
-                        SailPool.main(Runnable {
+                        SailThreadPool.main(Runnable {
                             checkFade()
                             iv.setImageBitmap(cache)
                         })
@@ -67,50 +66,53 @@ class SailEngine private constructor(context: Context) : ISailEngine, ISailObser
                     return@post
                 }
             }
-            options?.let { target.setImageResource(it.holder) }
-            iFetcher.fetch(url, this)
+
+            val w = iv.width
+            val h = iv.height
+            if (options.width * options.height == 0) {
+                when (options.quality) {
+                    QualityStrategy.LOW -> options.resize(w, h)
+                    QualityStrategy.NORMAL -> options.resize((w * 1.5).toInt(), (h * 1.5).toInt())
+                    QualityStrategy.HIGH -> options.resize(w shl 1, h shl 1)
+                    QualityStrategy.ORIGINAL -> {
+                        options.width = -1
+                        options.height = -1
+                    }
+                }
+            }
+            if (options.holder != 0) {
+                target.setImageResource(options.holder)
+            }
+            iFetcher.fetch(url, this, options)
         }
     }
 
     override fun onSuccess(bitmap: Bitmap) {
-        SailPool.execute(Runnable {
-            val bmp = if (options != null) {
-                when (options!!.quality) {
-                    QualityStrategy.LOW -> iCropper.crop(bitmap, target.width, target.height)
-                    QualityStrategy.NORMAL -> iCropper.crop(bitmap, (target.width * 1.5).toInt(), (target.height * 1.5).toInt())
-                    QualityStrategy.HIGH -> iCropper.crop(bitmap, target.width * 2, target.height * 2)
-                    QualityStrategy.ORIGINAL -> bitmap
-                    QualityStrategy.NONE -> iCropper.crop(bitmap, options!!.width, options!!.height)
-                }
-            } else {
-                iCropper.crop(bitmap, (target.width * 1.5).toInt(), (target.height * 1.5).toInt())
+        checkFade()
+        target.setImageBitmap(bitmap)
+        SailThreadPool.execute {
+            if (options.cache == CacheStrategy.ALL || options.cache == CacheStrategy.MEMORY) {
+                iCache.putMemoryCache(url, bitmap)
             }
-            println("old: ${bitmap.width}x${bitmap.height}")
-            println("new: ${bmp.width}x${bmp.height}")
-            SailPool.main(Runnable {
-                checkFade()
-                target.setImageBitmap(bmp)
-            })
-            if (options != null && options!!.cache == CacheStrategy.ALL || options!!.cache == CacheStrategy.MEMORY) {
-                iCache.putMemoryCache(url, bmp)
+            if (options.cache == CacheStrategy.ALL || options.cache == CacheStrategy.DISK) {
+                iCache.putDiskCache(url, bitmap)
             }
-            if (options != null && options!!.cache == CacheStrategy.ALL || options!!.cache == CacheStrategy.DISK) {
-                iCache.putDiskCache(url, bmp)
-            }
-        })
+        }
     }
 
     override fun onFail() {
-        options?.let { target.setImageResource(it.error) }
+        if (options.error != 0) {
+            target.setImageResource(options.error)
+        }
     }
 
     override fun dispose() {
     }
 
     private fun checkFade() {
-        if (options != null && options!!.fadeIn) {
+        if (options.fadeIn) {
             target.alpha = 0f
-            target.animate().alpha(1f).setDuration(options!!.duration).setInterpolator(DecelerateInterpolator()).start()
+            target.animate().alpha(1f).setDuration(options.duration).setInterpolator(DecelerateInterpolator()).start()
         }
     }
 }
