@@ -40,23 +40,24 @@ class SailEngine private constructor(context: Context) : ISailEngine, ISailObser
     override fun into(iv: ImageView) {
         target = iv
         target.post {
+            val key = "$url${options.quality}"
             if (!skipMemoryCache) {
-                val cache = iCache.getMemoryCache(url)
+                val cache = iCache.getMemoryCache(key)
                 cache?.let {
                     checkFade()
                     iv.setImageBitmap(cache)
-                    println("内存缓存")
+                    println("内存缓存: $url")
                     return@post
                 }
             }
             if (!skipDiskCache) {
-                val hasDiskCache = iCache.hasDiskCache(url)
+                val hasDiskCache = iCache.hasDiskCache(key)
                 if (hasDiskCache) {
                     SailThreadPool.execute(Runnable {
-                        println("磁盘缓存")
-                        val cache = iCache.getDiskCache(url)!!
+                        println("磁盘缓存: $url")
+                        val cache = iCache.getDiskCache(key)!!
                         if (options.cache == CacheStrategy.ALL || options.cache == CacheStrategy.MEMORY) {
-                            iCache.putMemoryCache(url, cache)
+                            iCache.putMemoryCache(key, cache)
                         }
                         SailThreadPool.main(Runnable {
                             checkFade()
@@ -90,12 +91,13 @@ class SailEngine private constructor(context: Context) : ISailEngine, ISailObser
     override fun onSuccess(bitmap: Bitmap) {
         checkFade()
         target.setImageBitmap(bitmap)
+        val key = "$url${options.quality}"
         SailThreadPool.execute {
             if (options.cache == CacheStrategy.ALL || options.cache == CacheStrategy.MEMORY) {
-                iCache.putMemoryCache(url, bitmap)
+                iCache.putMemoryCache(key, bitmap)
             }
             if (options.cache == CacheStrategy.ALL || options.cache == CacheStrategy.DISK) {
-                iCache.putDiskCache(url, bitmap)
+                iCache.putDiskCache(key, bitmap)
             }
         }
     }

@@ -13,6 +13,8 @@
 
   磁盘：文件
 
+  缓存不同尺寸
+
 * **Options**
 
   占位：holder
@@ -70,7 +72,7 @@
 
 * **两次decode导致`BitmapFactory.decodeStream()`返回null**
 
-  因为进行了一次获取宽高，输入流中的位置改变，第二次decode会返回null，第一次decode之前调用`inputStream.mark(length)`，之后使用`inputStream.reset()`，但**InputStream不支持mark()**，使用BufferedInputStream。
+  因为进行了一次获取宽高，输入流中的位置改变，第二次decode会返回null，第一次decode之前调用`inputStream.mark(length)`，之后使用`inputStream.reset()`，但**InputStream不支持mark()**，最后使用了BufferedInputStream。
 
   ```kotlin
   private fun decode(inputStream: InputStream, length: Int): Bitmap {
@@ -90,9 +92,9 @@
 
 ### TODO
 
-* **缓存不同尺寸**
+* **~~缓存不同尺寸~~**
 
-  同一个Url的图片保存不同尺寸的缓存
+  ~~同一个Url的图片保存不同尺寸的缓存~~
 
 * **生命周期绑定**
 
@@ -103,3 +105,5 @@
   onPause()
 
   onDestroy()
+
+* **暂停**

@@ -55,19 +55,4 @@ internal class SailFetcher : ISailFetcher {
         buffer.reset()
         return BitmapFactory.decodeStream(buffer, null, opt)
     }
-
-
-//    val bmp = if (options != null) {
-//        when (options!!.quality) {
-//            QualityStrategy.LOW -> iCropper.crop(bitmap, target.width, target.height)
-//            QualityStrategy.NORMAL -> iCropper.crop(bitmap, (target.width * 1.5).toInt(), (target.height * 1.5).toInt())
-//            QualityStrategy.HIGH -> iCropper.crop(bitmap, target.width * 2, target.height * 2)
-//            QualityStrategy.ORIGINAL -> bitmap
-//            QualityStrategy.NONE -> iCropper.crop(bitmap, options!!.width, options!!.height)
-//        }
-//    } else {
-//        iCropper.crop(bitmap, (target.width * 1.5).toInt(), (target.height * 1.5).toInt())
-//    }
-//    println("old: ${bitmap.width}x${bitmap.height}")
-//    println("new: ${bmp.width}x${bmp.height}")
 }

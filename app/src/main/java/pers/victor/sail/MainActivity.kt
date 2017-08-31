@@ -79,10 +79,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
-        val w = 1920
-        val h = 1080
-        val size = (w shl 16 and 0xffff0000.toInt()) or (h and 0xffff)
     }
 
 }

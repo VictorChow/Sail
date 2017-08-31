@@ -10,7 +10,7 @@ import java.util.concurrent.Executors
 internal object SailThreadPool {
     private val handler = Handler(Looper.getMainLooper())
 
-    private val pool = Executors.newFixedThreadPool(8)
+    private val pool = Executors.newFixedThreadPool(16)
 
     fun execute(r: Runnable) = pool.execute(r)
     fun execute(block: () -> Unit) = execute(Runnable { block() })
